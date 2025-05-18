@@ -1,6 +1,7 @@
 PARA CONSUMIR
 
-POST: http://localhost/websocket-client-api/
+POST: http://localhost/ws-client-php/
+http://localhost/websocket-ratchet/ws-client-php/
 
 {
 "user": "balanza",
