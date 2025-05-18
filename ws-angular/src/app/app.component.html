@@ -226,10 +226,13 @@
         </defs>
       </svg>
       <h1>Conexión a WebSocket</h1>
-      <p *ngIf="!isClosed">Iniciando conexión...</p>
+      <p *ngIf="!isConnected && !errorMessage && !isClosed">
+        Iniciando conexión...
+      </p>
+      <p *ngIf="isConnected">Conexión WebSocket establecida exitosamente.</p>
       <p *ngIf="message">Recibido del servidor: {{ message }}</p>
-      <p *ngIf="errorMessage">Error: {{ errorMessage }}</p>
-      <p *ngIf="isClosed">Conexión cerrada.</p>
+      <p *ngIf="errorMessage && isClosed">Error: {{ errorMessage }}</p>
+      <p *ngIf="isClosed && !errorMessage">Conexión cerrada.</p>
     </div>
   </div>
 </main>
