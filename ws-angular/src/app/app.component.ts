@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, timeInterval, timeout, timer } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { WebSocketService } from './webSocket.service';
+import { WebSocketService, WSData } from './webSocket.service';
 
 @Component({
   selector: 'app-root',
@@ -10,11 +10,14 @@ import { WebSocketService } from './webSocket.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  message: string = '';
+  data!: any;
+  message!: string | number | undefined;
   errorMessage: string = '';
   isClosed!: boolean;
   isConnected: boolean = false;
   connectionStatus: string = 'Desconectado';
+
+  timeOutId!: any;
 
   private onMessageSubscription: Subscription | undefined;
   private onOpenSubscription: Subscription | undefined;
@@ -26,8 +29,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.onMessageSubscription = this.webSocketService.onMessage$.subscribe(
-      (event: MessageEvent) => {
-        this.message = event.data;
+      (event: MessageEvent<any>) => {
+        this.data = event.data;
+        this.delay(JSON.parse(event.data));
       }
     );
 
@@ -39,14 +43,17 @@ export class AppComponent implements OnInit, OnDestroy {
     this.onCloseSubscription = this.webSocketService.onClose$.subscribe(() => {
       this.isClosed = true;
       this.isConnected = false;
-      this.message = '';
+      this.data = undefined;
+      this.message = undefined;
+      this.errorMessage = '';
     });
 
     this.onErrorSubscription = this.webSocketService.onError$.subscribe(
       (error) => {
+        this.data = undefined;
+        this.message = undefined;
         this.isClosed = true;
         this.errorMessage = 'Ha ocurrido un error con la conexión al WS';
-        this.message = '';
       }
     );
 
@@ -54,6 +61,13 @@ export class AppComponent implements OnInit, OnDestroy {
       this.webSocketService.connectionStatus$.subscribe((status: boolean) => {
         this.connectionStatus = status ? 'Conectado' : 'Desconectado';
       });
+  }
+
+  delay(data: WSData) {
+    clearTimeout(this.timeOutId);
+    this.timeOutId = setTimeout(() => {
+      this.message = data?.message;
+    }, 3000);
   }
 
   ngOnDestroy(): void {
@@ -68,7 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.connectionStatusSubscription)
       this.connectionStatusSubscription.unsubscribe();
 
-    this.closeConnection()
+    this.closeConnection();
   }
 
   closeConnection(): void {

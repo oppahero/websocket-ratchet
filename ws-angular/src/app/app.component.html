@@ -230,7 +230,8 @@
         Iniciando conexión...
       </p>
       <p *ngIf="isConnected">Conexión WebSocket establecida exitosamente.</p>
-      <p *ngIf="message">Recibido del servidor: {{ message }}</p>
+      <p *ngIf="data">Recibido del servidor: {{ data }}</p>
+      <p *ngIf="message">Después de unos segundos: {{ message }}</p>
       <p *ngIf="errorMessage && isClosed">Error: {{ errorMessage }}</p>
       <p *ngIf="isClosed && !errorMessage">Conexión cerrada.</p>
     </div>
