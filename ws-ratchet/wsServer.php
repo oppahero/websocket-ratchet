@@ -6,13 +6,17 @@ use App\Controllers\SocketController;
 
 require_once __DIR__ . '\vendor\autoload.php';
 
+$PORT = 8080;
+
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
             new SocketController()
         )
     ),
-    8080
+    $PORT
 );
+
+echo "Server is running! (port:{$PORT})\n";
 
 $server->run();
