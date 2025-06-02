@@ -7,6 +7,12 @@ import {
   Subscription,
 } from 'rxjs';
 
+export interface WSData {
+  user: string;
+  message: string;
+  group?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,14 +24,14 @@ export class WebSocketService implements OnDestroy {
 
   // Subjects para manejar los eventos del WebSocket
   private _onOpen$ = new Subject<Event>();
-  private _onMessage$ = new Subject<MessageEvent>();
+  private _onMessage$ = new Subject<MessageEvent<any>>();
   private _onError$ = new Subject<Event>();
   private _onClose$ = new Subject<CloseEvent>();
   private _connectionStatus$ = new BehaviorSubject<boolean>(false);
 
   // Observables públicos para que los componentes se suscriban
   public onOpen$: Observable<Event> = this._onOpen$.asObservable();
-  public onMessage$: Observable<MessageEvent> = this._onMessage$.asObservable();
+  public onMessage$: Observable<MessageEvent<any>> = this._onMessage$.asObservable();
   public onError$: Observable<Event> = this._onError$.asObservable();
   public onClose$: Observable<CloseEvent> = this._onClose$.asObservable();
   public connectionStatus$: Observable<boolean> = this._connectionStatus$.asObservable();
